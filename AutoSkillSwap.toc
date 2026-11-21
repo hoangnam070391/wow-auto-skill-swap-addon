@@ -1,0 +1,15 @@
+## Interface: 16001
+## Title: Auto Skill Swap
+## Notes: One key, two skills: if the first skill can't be used (range, cooldown, mana, target health...), the second one is cast. The icon shows the skill that will cast. Works for every class.
+## Author: namle
+## Version: 2.2.0
+## X-License: MIT
+## SavedVariables: AutoSkillSwapDB
+## IconTexture: Interface\Icons\INV_Misc_Key_03
+
+libs\LibStub.lua
+libs\CallbackHandler-1.0.lua
+libs\LibDataBroker-1.1.lua
+libs\LibDBIcon-1.0.lua
+
+AutoSkillSwap.lua

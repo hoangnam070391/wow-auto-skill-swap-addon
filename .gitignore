@@ -1,0 +1,8 @@
+# OS / editor files
+Thumbs.db
+.DS_Store
+.vscode/
+.idea/
+
+# Build output (release zips are built outside the repo)
+*.zip
