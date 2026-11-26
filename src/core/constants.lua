@@ -97,6 +97,10 @@ local CONDITIONS = {
 -- "in range" at any distance (same finding as the HunterRange addon).
 local MELEE_TEST = { 2974, 1495 } -- Wing Clip, Mongoose Bite (spell IDs)
 
+-- Hunter melee skills (spell IDs): Raptor Strike, Mongoose Bite, Wing Clip,
+-- Counterattack.
+local HUNTER_MELEE = { 2973, 1495, 2974, 19306 }
+
 ns.TITLE = TITLE
 ns.PREFIX = P
 ns.INTERVAL = INTERVAL
@@ -108,3 +112,4 @@ ns.OLD_PRESETS = OLD_PRESETS
 ns.OLD_NAMES = OLD_NAMES
 ns.CONDITIONS = CONDITIONS
 ns.MELEE_TEST = MELEE_TEST
+ns.HUNTER_MELEE = HUNTER_MELEE

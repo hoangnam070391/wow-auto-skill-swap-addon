@@ -2,7 +2,7 @@
 
 local _, ns = ...
 
-local CLASS, MELEE_TEST = ns.CLASS, ns.MELEE_TEST
+local CLASS, MELEE_TEST, HUNTER_MELEE = ns.CLASS, ns.MELEE_TEST, ns.HUNTER_MELEE
 
 local function IsSecret(v)
 	return type(issecretvalue) == "function" and issecretvalue(v) or false
@@ -79,6 +79,21 @@ local function TargetInMelee()
 	return false
 end
 
+-- Hunter melee skills. Raptor Strike reports "in range" at any distance, so
+-- their range comes from TargetInMelee() instead.
+local hunterMelee
+local function IsHunterMelee(name)
+	if CLASS ~= "HUNTER" or not name then return false end
+	if not hunterMelee then
+		hunterMelee = {}
+		for _, id in ipairs(HUNTER_MELEE) do
+			local n = SpellName(id)
+			if n then hunterMelee[n] = true end
+		end
+	end
+	return hunterMelee[name] or false
+end
+
 -- Can this spell be cast right now? true / false. Unknown answers (secret
 -- values in combat) count as true, so the icon keeps showing the priority.
 -- p (optional) turns checks off: p.noUsable, p.noCooldown, p.noRange.
@@ -108,6 +123,7 @@ local function CanCast(spell, p)
 		if InRange(spell, "target") == false then return false end
 		local info = SpellInfo(spell)
 		if info and (info.minRange or 0) > 0 and TargetInMelee() then return false end
+		if info and IsHunterMelee(info.name) and not TargetInMelee() then return false end
 	end
 	return true
 end

@@ -100,14 +100,35 @@ end)
 -- /skillswap or /sswap : open settings.  /skillswap debug : print what the addon sees.
 SLASH_AUTOSKILLSWAP1 = "/skillswap"
 SLASH_AUTOSKILLSWAP2 = "/sswap"
+-- tostring that does not touch secret values (combat)
+local function Text(v)
+	if ns.IsSecret(v) then return "secret" end
+	return tostring(v)
+end
+
 SlashCmdList.AUTOSKILLSWAP = function(msg)
 	if (msg or ""):lower():match("debug") then
-		print(P .. "class " .. tostring(CLASS) .. ", target in melee: " .. tostring(TargetInMelee()))
+		print(P .. "class " .. tostring(CLASS) .. ", target in melee: " .. tostring(TargetInMelee())
+			.. ", in combat: " .. tostring(InCombatLockdown()))
+		for _, id in ipairs(ns.MELEE_TEST) do
+			local spell = ns.SpellName(id)
+			print(P .. "  melee test " .. tostring(spell) .. " in range: " .. Text(spell and ns.InRange(spell, "target")))
+		end
 		for i, p in ipairs(ns.db.pairs) do
-			local a = SideSpell(p, A)
 			print(P .. MacroName(p) .. ": macro " .. tostring(MacroIndex(MacroName(p)))
-				.. ", key " .. tostring(boundKeys[i]) .. ", A can cast " .. tostring(CanCast(a))
-				.. ", now " .. tostring(shown[MacroName(p)]))
+				.. ", key " .. tostring(boundKeys[i]) .. ", now " .. tostring(shown[MacroName(p)]))
+			for _, side in ipairs({ A, ns.B }) do
+				local spell = SideSpell(p, side)
+				local info = spell and ns.SpellInfo(spell)
+				local usable = spell and C_Spell and C_Spell.IsSpellUsable and C_Spell.IsSpellUsable(spell)
+				local cd = spell and C_Spell and C_Spell.GetSpellCooldown and C_Spell.GetSpellCooldown(spell)
+				print(P .. "  " .. (side == A and "A " or "B ") .. tostring(spell)
+					.. ": can cast " .. tostring(CanCast(spell, p))
+					.. ", usable " .. Text(usable)
+					.. ", cd " .. Text(cd and cd.duration)
+					.. ", in range " .. Text(spell and ns.InRange(spell, "target"))
+					.. ", min range " .. Text(info and info.minRange))
+			end
 		end
 		wipe(failed)
 		Update(true)

@@ -136,7 +136,11 @@ local function NowSide(p)
 	if CondTrue(p.forceA) then return A end
 	if CondTrue(p.forceB) then return B end
 	if not ns.db.swap or p.off then return A end
-	return CanCast(SideSpell(p, A), p) and A or B
+	if CanCast(SideSpell(p, A), p) then return A end
+	-- A can't cast, but B can't either (e.g. Arcane Shot on cooldown while
+	-- the target is out of melee range): keep showing A.
+	if not CanCast(SideSpell(p, B), p) then return A end
+	return B
 end
 
 ns.Side = Side
